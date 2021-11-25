@@ -1,0 +1,23 @@
+{
+    "productionCenters": [
+        {
+            "id": 1,
+            "automation": 0
+        }
+    ],
+    "distributionCenters": [],
+    "clients": [
+        {
+            "id": 1,
+            "parent": 1
+        },
+        {
+            "id": 2,
+            "parent": 1
+        },
+        {
+            "id": 3,
+            "parent": 1
+        }
+    ]
+}
