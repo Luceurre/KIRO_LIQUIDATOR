@@ -7,7 +7,7 @@ from main import INSTANCE_FILES, parse
 def solution(instance: Instance):
     production_center_capacities = {}
     for index in range(instance.site_count):
-        production_center_capacities[index] = instance.capacities.productionCenter
+        production_center_capacities[index] = instance.capacities.productionCenter + instance.capacities.automationBonus
 
     selected_production_center_id = set()
 
@@ -21,15 +21,27 @@ def solution(instance: Instance):
         distance_between_client_and_production_center = instance.siteClientDistances[:, client_with_most_demand]
         sorted_distance_indexes = np.argsort(distance_between_client_and_production_center)
 
-        k = 0
-        prod_center = sorted_distance_indexes[k]
-        while production_center_capacities[prod_center] - demands[client_with_most_demand] < 0:
-            k += 1
+        intersection = [select_id for select_id in selected_production_center_id if select_id in sorted_distance_indexes[:4]]
+        if len(intersection) > 0:
+            k = 0
+            prod_center = intersection[k]
+            while production_center_capacities[prod_center] - demands[client_with_most_demand] < 0:
+                k += 1
+                prod_center = sorted_distance_indexes[k]
+            production_center_capacities[k] -= demands[client_with_most_demand]
+            demands[client_with_most_demand] = 0
+            selected_production_center_id.add(prod_center)
+            client_production_center_map[client_with_most_demand] = prod_center
+        else:
+            k = 0
             prod_center = sorted_distance_indexes[k]
-        production_center_capacities[k] -= demands[client_with_most_demand]
-        demands[client_with_most_demand] = 0
-        selected_production_center_id.add(prod_center)
-        client_production_center_map[client_with_most_demand] = prod_center
+            while production_center_capacities[prod_center] - demands[client_with_most_demand] < 0:
+                k += 1
+                prod_center = sorted_distance_indexes[k]
+            production_center_capacities[k] -= demands[client_with_most_demand]
+            demands[client_with_most_demand] = 0
+            selected_production_center_id.add(prod_center)
+            client_production_center_map[client_with_most_demand] = prod_center
 
     return selected_production_center_id, client_production_center_map
 
@@ -38,3 +50,7 @@ if __name__ == '__main__':
     tiny_instance = Instance(tiny)
 
     print(solution(tiny_instance))
+
+def nb_clients(Solution):
+    
+

@@ -6,6 +6,7 @@ import json
 
 from Instance import Instance
 
+
 INSTANCE_FILES = {
     'tiny': './instances/KIRO-tiny.json',
     'small': './instances/KIRO-small.json',
@@ -39,15 +40,15 @@ def compute_score(instance_type, solution):
     ### PRODUCTION COSTS ###
     for client in solution["clients"]:
         if str(client["parent"]) in productionCenters.keys():
-            productionCentersUsage[str(client["parent"])] = instance.clients[str(client["id"])] + productionCentersUsage.get(
-                str(client["parent"], 0))
+            productionCentersUsage[str(client["parent"])] = instance.clients[client["id"]-1] + productionCentersUsage.get(
+                str(client["parent"]), 0)
             score += instance.productionCosts.productionCenter
             if productionCenters[str(client["parent"])] == 1:
                 score -= instance.productionCosts.automationBonus
         if str(client["parent"]) in distributionCenters.keys():
             score += instance.productionCosts.distributionCenter
             productionCenter = productionCenters[str(distributionCenters[str(client["parent"])])]
-            productionCentersUsage[productionCenter] = instance.clients[str(client["id"])] + productionCentersUsage.get(
+            productionCentersUsage[productionCenter] = instance.clients[client["id"]] + productionCentersUsage.get(
                 productionCenter, 0)
             score += instance.productionCosts.productionCenter
             if productionCenter == 1:
@@ -56,9 +57,9 @@ def compute_score(instance_type, solution):
     ### ROUTING COSTS ###
     for client in solution["clients"]:
         if str(client["parent"]) in productionCenters.keys():
-            score += instance.routingCosts.secondary * instance.siteClientDistances[str(client["parent"]), client["id"]]
+            score += instance.routingCosts.secondary * instance.siteClientDistances[client["parent"], client["id"]]
         if str(client["parent"]) in distributionCenters.keys():
-            score += instance.routingCosts.secondary * instance.siteClientDistances[str(client["parent"]), client["id"]]
+            score += instance.routingCosts.secondary * instance.siteClientDistances[client["parent"], client["id"]]
             productionCenter = productionCenters[str(distributionCenters[str(client["parent"])])]
             score += instance.routingCosts.primary * instance.siteClientDistances[
                 str(client["parent"]), productionCenter]
@@ -76,9 +77,14 @@ def compute_score(instance_type, solution):
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    small_file = INSTANCE_FILES['small']
-    instance = Instance(parse(small_file))
+    size = 'large'
+    tiny = parse(INSTANCE_FILES[size])
+    tiny_instance = Instance(tiny)
 
-    print(instance)
+    prod, client = solution(tiny_instance)
+    sol = Solution(prod, client)
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+    compute_score(size, sol.to_dict())
+
+    with open("./solutions/large.json", 'w') as file:
+        json.dump(sol.to_dict(), file)
