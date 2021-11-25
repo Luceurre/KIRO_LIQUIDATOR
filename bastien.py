@@ -1,12 +1,17 @@
+from main import compute_score, json, parse, INSTANCE_FILES
+from Instance import Instance
+from oceane import solution
+from Solution import Solution
+from trivial_solution import update_solution
+
 if __name__ == '__main__':
     size = 'large'
-    tiny = parse(INSTANCE_FILES[size])
-    tiny_instance = Instance(tiny)
+    file = parse(INSTANCE_FILES[size])
+    instance = Instance(file)
 
-    prod, client = solution(tiny_instance)
-    sol = Solution(prod, client)
+    prod, client = solution(instance)
+    prod, client, dist = update_solution((prod, client, {}), instance)
+    sol = Solution(prod, client, dist)
 
-    compute_score(size, sol.to_dict())
 
-    with open("./solutions/large.json", 'w') as file:
-        json.dump(sol.to_dict(), file)
+    print(compute_score(size, sol.to_dict()))

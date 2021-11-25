@@ -21,7 +21,7 @@ def solution(instance: Instance):
         distance_between_client_and_production_center = instance.siteClientDistances[:, client_with_most_demand]
         sorted_distance_indexes = np.argsort(distance_between_client_and_production_center)
 
-        intersection = [select_id for select_id in selected_production_center_id if select_id in sorted_distance_indexes[:4]]
+        intersection = [select_id for select_id in selected_production_center_id if select_id in sorted_distance_indexes[:20]]
         if len(intersection) > 0:
             k = 0
             prod_center = intersection[k]
@@ -51,6 +51,4 @@ if __name__ == '__main__':
 
     print(solution(tiny_instance))
 
-def nb_clients(Solution):
-    
 

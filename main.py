@@ -42,26 +42,26 @@ def compute_score(instance_type, solution):
         if str(client["parent"]) in productionCenters.keys():
             productionCentersUsage[str(client["parent"])] = instance.clients[client["id"]-1] + productionCentersUsage.get(
                 str(client["parent"]), 0)
-            score += instance.productionCosts.productionCenter
+            score += instance.clients[client["id"]-1] * instance.productionCosts.productionCenter
             if productionCenters[str(client["parent"])] == 1:
-                score -= instance.productionCosts.automationBonus
+                score -= instance.clients[client["id"]-1] * instance.productionCosts.automationBonus
         if str(client["parent"]) in distributionCenters.keys():
-            score += instance.productionCosts.distributionCenter
+            score += instance.clients[client["id"]-1] * instance.productionCosts.distributionCenter
             productionCenter = productionCenters[str(distributionCenters[str(client["parent"])])]
-            productionCentersUsage[productionCenter] = instance.clients[client["id"]] + productionCentersUsage.get(
+            productionCentersUsage[productionCenter] = instance.clients[client["id"]-1] + productionCentersUsage.get(
                 productionCenter, 0)
             score += instance.productionCosts.productionCenter
             if productionCenter == 1:
-                score -= instance.productionCosts.automationBonus
+                score -= instance.clients[client["id"]-1] * instance.productionCosts.automationBonus
 
     ### ROUTING COSTS ###
     for client in solution["clients"]:
         if str(client["parent"]) in productionCenters.keys():
-            score += instance.routingCosts.secondary * instance.siteClientDistances[client["parent"], client["id"]]
+            score += instance.clients[client["id"]-1] * instance.routingCosts.secondary * instance.siteClientDistances[client["parent"]-1, client["id"]-1]
         if str(client["parent"]) in distributionCenters.keys():
-            score += instance.routingCosts.secondary * instance.siteClientDistances[client["parent"], client["id"]]
+            score += instance.clients[client["id"]-1] * instance.routingCosts.secondary * instance.siteClientDistances[client["parent"], client["id"]]
             productionCenter = productionCenters[str(distributionCenters[str(client["parent"])])]
-            score += instance.routingCosts.primary * instance.siteClientDistances[
+            score += instance.clients[client["id"]-1] * instance.routingCosts.primary * instance.siteClientDistances[
                 str(client["parent"]), productionCenter]
 
     ### CAPACITY COSTS ###

@@ -1,0 +1,28 @@
+{
+  "clients": [
+    {
+      "id": 3,
+      "parent": 1
+    },
+    {
+      "id": 1,
+      "parent": 1
+    },
+    {
+      "id": 2,
+      "parent": 1
+    }
+  ],
+  "distributionCenters": [
+    {
+      "id": 1,
+      "parent": 2
+    }
+  ],
+  "productionCenters": [
+    {
+      "id": 2,
+      "automation": 0
+    }
+  ]
+}
